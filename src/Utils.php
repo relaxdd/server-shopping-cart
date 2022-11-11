@@ -50,7 +50,7 @@ function isAllowedDomain(?string $domain = null, array $additional_list = []) {
   $http_origin = $request_headers['origin']
     ?? ($_SERVER['HTTP_X_FORWARDED_HOST'] ?? ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME']));
   $protocol = apache_getenv('HTTPS') ? 'https:' : 'http:';
-  $domain = $domain ?: get_main_domain();
+  $domain = $domain ?: getMainDomain();
   $regexp = "/$protocol:\/\/(.*?)\.$domain/";
 
   if (in_array($http_origin, $additional_list))
