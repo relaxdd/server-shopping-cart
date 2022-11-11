@@ -11,6 +11,9 @@ use Relaxdd\Cart\Models\CartModel;
 use Relaxdd\Cart\Models\SubscribeModel;
 use function Relaxdd\Cart\Utils\isAllowedDomain;
 
+// Composer autoload
+require_once "./vendor/autoload.php";
+
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: GET, POST');
 header("Content-Type: application/json; charset=UTF-8");
@@ -23,9 +26,6 @@ if ($match = isAllowedDomain()) {
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
-
-// Composer autoload
-require_once "./vendor/autoload.php";
 
 // Middlewares
 $checkPostBody = new CheckBody("id", "qty", "token");

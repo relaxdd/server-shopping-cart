@@ -9,7 +9,7 @@ use Error;
  * @return mixed
  */
 function TODO(string $string) {
-  throw new Error("Todo: $string");
+  throw new Error("TODO - $string");
 }
 
 /**
