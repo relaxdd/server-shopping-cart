@@ -1,5 +1,5 @@
 {
-  "name": "relaxdd/cart",
+  "name": "relaxdd/server-cart",
   "type": "package",
   "license": "MIT",
   "autoload": {
@@ -12,13 +12,14 @@
   },
   "authors": [
     {
-      "name": "awenn2015",
+      "name": "relaxdd",
       "email": "awenn2015@gmail.com"
     }
   ],
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "require": {
     "ext-apache": "*",
-    "ext-json": "*"
+    "ext-json": "*",
+    "php": "^7.4"
   }
 }
