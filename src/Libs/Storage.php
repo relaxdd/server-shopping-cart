@@ -3,17 +3,17 @@
 namespace Relaxdd\Cart\Libs;
 
 use Error;
-use Relaxdd\Cart\Types\ListArray;
 use function Relaxdd\Cart\Utils\arrayFind;
+use function Relaxdd\Cart\Utils\indexOf;
 
 class Storage {
   public string $filepath;
 
   /**
-   * @param string $filename
+   * @param string $filename Полный относительный путь от DOCUMENT_ROOT
    */
   public function __construct(string $filename) {
-    $this->filepath = $_SERVER["DOCUMENT_ROOT"] . "/server/cart" . $filename;
+    $this->filepath = $_SERVER["DOCUMENT_ROOT"] . $filename;
   }
 
   /**
@@ -67,7 +67,7 @@ class Storage {
   public function change(string $token, bool $value, string $key = "changed") {
     $data = $this->get();
     $cb = fn(array $item) => ($item["token"] === $token);
-    $index = ListArray::call("indexOf", $data, $cb);
+    $index = indexOf($data, $cb);
 
     if ($index === -1)
       throw new Error("Токен не найден в базе!");
@@ -87,7 +87,7 @@ class Storage {
   public function replace(string $token, array $data) {
     $listOfTokens = $this->get();
     $cb = fn(array $item) => ($item["token"] === $token);
-    $index = ListArray::call("indexOf", $listOfTokens, $cb);
+    $index = indexOf($listOfTokens, $cb);
 
     if ($index === -1)
       throw new Error("Не найден токен в базе!");

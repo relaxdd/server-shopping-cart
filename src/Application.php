@@ -2,6 +2,7 @@
 
 namespace Relaxdd\Cart;
 
+use Relaxdd\Cart\Data\Route;
 use Relaxdd\Cart\Http\Method;
 use Relaxdd\Cart\Http\Request;
 use Relaxdd\Cart\Http\Response;

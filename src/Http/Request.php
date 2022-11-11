@@ -2,7 +2,8 @@
 
 namespace Relaxdd\Cart\Http;
 
-use Relaxdd\Cart\Types\ListArray;
+
+use function Relaxdd\Cart\Utils\arrayEvery;
 
 class Request {
   public array $query;
@@ -41,11 +42,8 @@ class Request {
   /*  */
 
   public function validateBody(array $required): bool {
-    return ListArray::call(
-      "every",
-      $required,
-      fn($key) => (array_key_exists($key, $this->body))
-    );
+    $cb = fn($key) => (array_key_exists($key, $this->body));
+    return arrayEvery($required, $cb);
   }
 
   public function getRequestBody(): array {

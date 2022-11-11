@@ -5,8 +5,8 @@ namespace Relaxdd\Cart\Models;
 use Error;
 use Exception;
 use Relaxdd\Cart\Libs\Cookie;
-use Relaxdd\Cart\Types\ListArray;
 use function Relaxdd\Cart\Utils\getMainDomain;
+use function Relaxdd\Cart\Utils\indexOf;
 
 class CartModel {
   private Cookie $cookie;
@@ -53,7 +53,7 @@ class CartModel {
   public function setItemQty(string $id, string $qty): bool {
     $cart = $this->getCart();
     $cb = fn($el) => ($el["id"] === $id);
-    $index = ListArray::call("indexOf", $cart, $cb);
+    $index = indexOf($cart, $cb);
     $qty = (int) $qty;
 
     if ($index !== -1)
@@ -96,12 +96,8 @@ class CartModel {
     // Проверка
     $check_cart = $this->getCart();
     $validate = false;
-
-    $index = ListArray::call(
-      "indexOf",
-      $check_cart,
-      fn($elem) => $elem["id"] === $newItem["id"]
-    );
+    $cb = fn($elem) => $elem["id"] === $newItem["id"];
+    $index = indexOf($check_cart, $cb);
 
     if ($index !== -1) {
       $check_qty = $check_cart[$index]["qty"] === $cart[$index]["qty"] + (int) $newItem["qty"];
@@ -113,16 +109,24 @@ class CartModel {
   }
 
   /**
+   * Проверяет наличие изменений в корзине
+   *
+   * @param array $cart
+   * @return bool
+   */
+  public function checkChanges(array $cart): bool {
+    $serverCart = $this->getCart();
+    return $serverCart !== $cart;
+  }
+
+  /**
    * @param array $cart Корзина со всеми элементами $item
    * @param array $item Элемент который нужно добавить или обновить кол-во существующего
    * @return array
    */
   protected function pushCartItem(array $cart, array $item): array {
-    $index = ListArray::call(
-      "indexOf",
-      $cart,
-      fn($el) => ($el["id"] === $item["id"])
-    );
+    $callback = fn($el) => $el["id"] === $item["id"];
+    $index = indexOf($cart, $callback);
 
     if ($index !== -1)
       $cart[$index]["qty"] += (int) $item["qty"];

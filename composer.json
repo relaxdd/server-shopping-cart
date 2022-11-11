@@ -18,6 +18,7 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "ext-apache": "*"
+    "ext-apache": "*",
+    "ext-json": "*"
   }
 }

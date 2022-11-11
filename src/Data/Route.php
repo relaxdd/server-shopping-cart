@@ -1,6 +1,6 @@
 <?php
 
-namespace Relaxdd\Cart;
+namespace Relaxdd\Cart\Data;
 
 use Relaxdd\Cart\Http\Request;
 use Relaxdd\Cart\Http\Response;

@@ -10,7 +10,7 @@ class SubscribeModel {
   private Storage $storage;
 
   public function __construct() {
-    $this->storage = new Storage("/store.json");
+    $this->storage = new Storage("/server/cart/src/store.json");
   }
 
   /**
@@ -33,7 +33,7 @@ class SubscribeModel {
   }
 
   /**
-   * Подписываеться на обновление корзины
+   * Подписывается на обновление корзины
    *
    * @param string $token
    * @return void

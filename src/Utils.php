@@ -3,6 +3,7 @@
 namespace Relaxdd\Cart\Utils;
 
 use Error;
+use TypeError;
 
 /**
  * @param string $string
@@ -10,6 +11,15 @@ use Error;
  */
 function TODO(string $string) {
   throw new Error("TODO - $string");
+}
+
+function indexOf(array $array, callable $callback): int {
+  foreach ($array as $index => $value) {
+    if ($callback($value, $index) === true)
+      return $index;
+  }
+
+  return -1;
 }
 
 /**
@@ -24,6 +34,27 @@ function arrayFind(array $array, callable $callback) {
   }
 
   return null;
+}
+
+function arrayEvery(array $array, callable $callback, $thisArg = null): bool {
+  $index = 0;
+
+  foreach ($array as $key => $value) {
+    $condition = false;
+
+    if (is_null($thisArg))
+      $condition = call_user_func_array($callback, [$value, $key, $index, $array]);
+    else if (is_object($thisArg) || (is_string($thisArg) && class_exists($thisArg)))
+      $condition = call_user_func_array([$thisArg, $callback], [$value, $key, $index, $array]);
+    else if (is_string($thisArg) && !class_exists($thisArg))
+      throw new TypeError("Class '$thisArg' not found");
+
+    if (!$condition)
+      return false;
+    $index++;
+  }
+
+  return true;
 }
 
 /**
