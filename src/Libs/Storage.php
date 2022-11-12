@@ -26,10 +26,16 @@ class Storage {
       throw new Error("Файл не существует или не доступен для чтения!");
 
     $file = file_get_contents($this->filepath);
+
+    if (empty($file)) {
+      sleep(0.25);
+      $this->get();
+    }
+
     $data = json_decode($file, true);
 
     if (empty($data))
-      throw new Error("Файл storage пустой!");
+      throw new Error("Файл storage пустой! $file");
 
     return $data;
   }
@@ -44,7 +50,12 @@ class Storage {
       throw new Error("Файл не существует или не доступен для записи!");
 
     $json = json_encode($data, JSON_UNESCAPED_UNICODE);
-    file_put_contents($this->filepath, $json);
+    $result = file_put_contents($this->filepath, $json);
+
+    if ($result === false) {
+      sleep(0.25);
+      $this->set($data);
+    }
   }
 
   /**
@@ -61,10 +72,45 @@ class Storage {
   /**
    * @param string $token
    * @param bool $value
-   * @param string $key
+   * @param string|null $changer
    * @return void
    */
-  public function change(string $token, bool $value, string $key = "changed") {
+  public function change(string $token, bool $value, ?string $changer) {
+    [$data, $index] = $this->getDataWithTokenIndex($token);
+
+    $data[$index]["changed"] = $value;
+    $data[$index]["changer"] = $value ? $changer : null;
+
+    $this->set($data);
+  }
+
+
+  public function setSubscribed(string $token, bool $isEntry) {
+    [$data, $index] = $this->getDataWithTokenIndex($token);
+
+    $data[$index]["listeners"] = $isEntry
+      ? $data[$index]["listeners"] + 1
+      : $data[$index]["listeners"] - 1;
+
+    $this->set($data);
+  }
+
+  /**
+   * @param string $token
+   * @param array $replacer
+   * @return void
+   */
+  public function replace(string $token, array $replacer) {
+    [$data, $index] = $this->getDataWithTokenIndex($token);
+    $data[$index] = $replacer;
+    $this->set($data);
+  }
+
+  /**
+   * @param string $token
+   * @return array Массив из двух элементов, первый элемент array Storage::get(), второй int $index найденного элемента по токену
+   */
+  protected function getDataWithTokenIndex(string $token): array {
     $data = $this->get();
     $cb = fn(array $item) => ($item["token"] === $token);
     $index = indexOf($data, $cb);
@@ -72,27 +118,6 @@ class Storage {
     if ($index === -1)
       throw new Error("Токен не найден в базе!");
 
-    if ($key === "token")
-      throw new Error("Запрещено менять ключ токена");
-
-    $data[$index][$key] = $value;
-    $this->set($data);
-  }
-
-  /**
-   * @param string $token
-   * @param array $data
-   * @return void
-   */
-  public function replace(string $token, array $data) {
-    $listOfTokens = $this->get();
-    $cb = fn(array $item) => ($item["token"] === $token);
-    $index = indexOf($listOfTokens, $cb);
-
-    if ($index === -1)
-      throw new Error("Не найден токен в базе!");
-
-    $listOfTokens[$index] = $data;
-    $this->set($listOfTokens);
+    return [$data, $index];
   }
 }

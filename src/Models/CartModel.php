@@ -112,11 +112,11 @@ class CartModel {
    * Проверяет наличие изменений в корзине
    *
    * @param array $cart
-   * @return bool
+   * @return false|array
    */
-  public function checkChanges(array $cart): bool {
+  public function checkChanges(array $cart) {
     $serverCart = $this->getCart();
-    return $serverCart !== $cart;
+    return $serverCart !== $cart ? $serverCart : false;
   }
 
   /**

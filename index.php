@@ -21,6 +21,8 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
+// TODO: Создать мидлварину на проверку типов входящий данных
+
 // Application
 $app = new Application();
 // Controller
@@ -28,7 +30,7 @@ $controller = new Controller();
 // Use middlewares
 $app->use(new CheckAction());
 // Middlewares
-$checkPostBody = new CheckBody("id", "qty", "token");
+$checkPostBody = new CheckBody("id", "qty", "token", "changer");
 
 /* Init actions */
 
@@ -41,7 +43,7 @@ $app->get("token", [$controller, "GetToken"], [], "Сгенерировать н
 $app->post(
   "subscribe",
   [$controller, "PostSubscribe"],
-  [new CheckBody("token")],
+  [new CheckBody("token", "changer")],
   "Подписаться на обновление корзины"
 );
 
@@ -65,7 +67,7 @@ $app->post(
 $app->post(
   "delete",
   [$controller, "PostDelete"],
-  [new CheckBody("id", "token")],
+  [new CheckBody("id", "token", "changer")],
   "Удалить элемент из корзины"
 );
 
@@ -73,7 +75,7 @@ $app->post(
 $app->post(
   "clear",
   [$controller, "PostClear"],
-  [new CheckBody("token")],
+  [new CheckBody("token", "changer")],
   "Очистить корзину"
 );
 

@@ -36,9 +36,12 @@ class SubscribeModel {
    * Подписывается на обновление корзины
    *
    * @param string $token
+   * @param string $changer
    * @return void
    */
-  public function subscribe(string $token) {
+  public function subscribe(string $token, string $changer) {
+    // $this->storage->setSubscribed($token, true);
+
     while (true) {
       $tokenData = $this->findToken($token);
 
@@ -48,24 +51,30 @@ class SubscribeModel {
       }
 
       // Проверка на обновление корзины
-      if ($tokenData["changed"] === true) {
-        $this->storage->change($token, false);
+      // TODO: Сделать так что бы убавлялись слушатели в неконтролируемых ситуациях
+      if ($tokenData["changed"] === true && $tokenData["changer"] !== $changer) {
+        // $qty = $this->findToken($token)["listeners"];
+        $this->storage->change($token, false, $changer);
+
         break;
       }
 
       sleep(self::POLLING_FREQUENCY);
     }
+
+    // $this->storage->setSubscribed($token, false);
   }
 
   /**
    * Меняет статус изменения в базе по токену
    *
    * @param string $token
+   * @param string $changer
    * @param bool $value
    * @return void
    */
-  public function setChanged(string $token, bool $value) {
-    $this->storage->change($token, $value);
+  public function setChanged(string $token, string $changer, bool $value) {
+    $this->storage->change($token, $value, $changer);
   }
 
   /**

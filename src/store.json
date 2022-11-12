@@ -1,6 +1,8 @@
 [
   {
     "token": "636be1af85977",
-    "changed": false
+    "changed": false,
+    "changer": null,
+    "listeners": 0
   }
 ]
